@@ -1,0 +1,30 @@
+
+select trunc(first_time) Dia,
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 0, 1)),0,5) "00",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 1, 1)),0,5) "01",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 2, 1)),0,5) "02",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 3, 1)),0,5) "03",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 4, 1)),0,5) "04",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 5, 1)),0,5) "05",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 6, 1)),0,5) "06",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 7, 1)),0,5) "07",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 8, 1)),0,5) "08",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 9, 1)),0,5) "09",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 10, 1)),0,5) "10",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 11, 1)),0,5) "11",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 12, 1)),0,5) "12",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 13, 1)),0,5) "13",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 14, 1)),0,5) "14",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 15, 1)),0,5) "15",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 16, 1)),0,5) "16",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 17, 1)),0,5) "17",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 18, 1)),0,5) "18",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 19, 1)),0,5) "19",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 20, 1)),0,5) "20",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 21, 1)),0,5) "21",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 22, 1)),0,5) "22",
+       substr(sum (decode (to_number (to_char (FIRST_TIME, 'HH24')), 23, 1)),0,5) "23",
+       count(trunc(first_time)) Total
+  from gv$log_history
+ group by trunc(first_time)
+ order by dia desc;
