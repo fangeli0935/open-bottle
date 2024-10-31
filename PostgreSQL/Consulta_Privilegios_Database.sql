@@ -1,3 +1,14 @@
+/* Todos os privilégios de uma role no banco */
+SELECT 
+    table_schema,
+    table_name,
+    privilege_type
+FROM 
+    information_schema.role_table_grants
+WHERE 
+    grantee = 'nome_da_role';
+
+/* Saber se uma role pode criar arquivos temporarios */
 SELECT 
     d.datname AS database,
     pg_catalog.pg_get_userbyid(d.datdba) AS owner,
