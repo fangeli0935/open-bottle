@@ -1,0 +1,67 @@
+
+select * from (
+WITH job_runs AS (
+    SELECT
+        r.owner,
+        r.job_name,
+        EXTRACT(HOUR FROM r.actual_start_date) hour_of_day,
+
+        (
+            EXTRACT(DAY FROM r.cpu_used)*86400 +
+            EXTRACT(HOUR FROM r.cpu_used)*3600 +
+            EXTRACT(MINUTE FROM r.cpu_used)*60 +
+            EXTRACT(SECOND FROM r.cpu_used)
+        ) cpu_seconds,
+
+        (
+            EXTRACT(DAY FROM r.run_duration)*86400 +
+            EXTRACT(HOUR FROM r.run_duration)*3600 +
+            EXTRACT(MINUTE FROM r.run_duration)*60 +
+            EXTRACT(SECOND FROM r.run_duration)
+        ) run_seconds
+
+    FROM dba_scheduler_job_run_details r
+    WHERE r.status = 'SUCCEEDED'
+    AND r.actual_start_date > SYSDATE - 7
+)
+
+SELECT
+    jr.hour_of_day,
+    jr.owner,
+    jr.job_name,
+    substr(j.job_action,1,80) as job_action,
+
+    COUNT(*) executions,
+
+    ROUND(SUM(jr.cpu_seconds),2) total_cpu_seconds,
+    ROUND(SUM(jr.run_seconds),2) total_runtime_seconds,
+
+    ROUND(SUM(jr.cpu_seconds)/COUNT(*),2) cpu_per_exec,
+
+    nvl(ROUND(
+        SUM(jr.cpu_seconds) /
+        NULLIF(
+            SUM(jr.run_seconds) *
+            (SELECT TO_NUMBER(value)
+             FROM v$parameter
+             WHERE name='cpu_count'),
+        0
+        ) * 100
+    ,2),0) avg_cpu_percent
+
+FROM job_runs jr
+LEFT JOIN dba_scheduler_jobs j
+       ON j.owner = jr.owner
+      AND j.job_name = jr.job_name
+
+GROUP BY
+    jr.hour_of_day,
+    jr.owner,
+    jr.job_name,
+    substr(j.job_action,1,80)
+
+ORDER BY
+    jr.hour_of_day,
+    total_cpu_seconds DESC
+    ) v 
+    ;
